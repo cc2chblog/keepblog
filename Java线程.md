@@ -72,7 +72,7 @@ TIMED_WAITING
 WAITING 
           某一等待线程的线程状态。 
 ### 2.2 状态转换
-![线程状态如](res:\attach\160503232905006\线程状态如.jpg)
+![线程状态如图](https://raw.githubusercontent.com/cc2chblog/keepblog/master/images/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81%E5%9B%BE.jpg)
 
 ## 3. 终止线程
 ###3.1 Thread.stop()***（废弃方法）***
@@ -197,9 +197,9 @@ public class StopThreadUnsafeTest {
 }
 
 ```
+**执行结果：**
 
->**执行结果**
-![image](res:\attach\160503232905006\image.jpg)
+![线程数据不一致结果图](https://raw.githubusercontent.com/cc2chblog/keepblog/master/images/image.jpg)
 
 ###3.2 正确终止线程
 > 使用标志位，让线程自行结束
@@ -330,3 +330,174 @@ public class StopTheadSafeTest {
 }
 
 ```
+## 4. 线程中断
+>public void interrupt()   //中断线程
+>public boolean isInterrupted() //测试当前线程是否已经中断
+>public static boolean interrupted()//测试当前线程是否已经中断，并清除线程的中断状态。
+
+interrupt()方法通知目标线程进行中断，但是并不能直接起到类似stop()的直接中断的作用，它提供了一个中断线程的标志位，然后配合isInterruped的判断才能中断线程。
+**以下示例是无法中断线程的**
+```java
+package com.cc.training.thread;
+
+/**	
+ * 线程中断的示例
+ * @author cc
+ *
+ */
+public class InterruptThreadTest {
+
+	/**
+	 * 直接使用Interrupt方法是无法中断线程的
+	 * 它提供了一个中断线程的标志位，然后配合isInterruped的判断才能中断线程。
+	 * @param args
+	 * @throws InterruptedException 
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+		Thread t = new Thread(){
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while(true){
+					Thread.yield();
+				}
+			}
+		};
+		t.start();
+		Thread.sleep(2000);
+		t.interrupt();
+	}
+}
+```
+
+**正确中断线程的示例**
+```java
+package com.cc.training.thread;
+
+/**
+ * 线程中断的示例
+ * 
+ * @author cc
+ *
+ */
+public class InterruptThreadTest {
+
+	/**
+	 * 直接使用Interrupt方法是无法中断线程的 它提供了一个中断线程的标志位，然后配合isInterruped的判断才能中断线程。
+	 * 
+	 * @param args
+	 * @throws InterruptedException
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					// 使用isInterrupted()方法，判断中断线程的标志位来起到中断线程的作用
+					if (Thread.currentThread().isInterrupted()) {
+						System.out.println("Interrupted");
+						break;
+					}
+					Thread.yield();
+				}
+			}
+		};
+		t.start();
+		Thread.sleep(2000);
+		t.interrupt();
+	}
+
+}
+
+```
+## 等待（wait）和通知（notify）
+> public final void wait() throws InterruptedException //在其他线程调用此对象的 notify() 方法或 notifyAll() 方法前，导致当前线程等待
+> public final void notify() //唤醒在此对象监视器上等待的单个线程。
+
+如果一个线程A调用obj.wait()方法，这个线程A就会被放置到等待队列中。
+线程A会一直等待到其他线程调用了obj.notify()为止。
+<img src="D:\04-make_it_done\01-blog\keepblog\images\notify唤醒等待的线程.png" width="481" height="564" border="0" alt="">
+
+Object.wait()方法必须包含在对于的synchronzied语句块中，无论是wait()或者notify()都需要首先获取目标对象的一个监视器。
+<img src="D:\04-make_it_done\01-blog\keepblog\images\wait()和notify()的工作流程细节.png" width="460" height="560" border="0" alt="">
+
+代码示例如下：
+```java
+package com.cc.training.thread;
+
+/**
+ * 一个简单的使用Wait方法和Notify方法的样例
+ * @author cc
+ *
+ */
+public class WaitAndNotifyThreadTest {
+	/**
+	 * 多线程操作的共享资源
+	 */
+	final static Object obj = new Object();
+	
+	/**
+	 * 定义一个线程，用于执行wait方法进行等待
+	 * 直到其他线程调用notify方法唤醒
+	 * @author cc
+	 *
+	 */
+	public static class T1 extends Thread{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			synchronized (obj) {
+				System.out.println("T1 start!");
+				System.out.println("T1 wait for object");
+				try {
+					obj.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("T1 End!");
+			}
+		}
+	}
+	
+	/**
+	 * 定义一个线程，用于执行notify方法去唤醒其他线程
+	 * @author cc
+	 *
+	 */
+	public static class T2 extends Thread{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			synchronized (obj) {
+				System.out.println("T2 start! notify one thread");
+				obj.notify();
+				System.out.println("T2 End!");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		Thread t1 = new T1();
+		Thread t2 = new T2();
+		t1.start();
+		t2.start();
+	}
+}
+```
+执行结果如下：
+>T1 start!
+T1 wait for object
+T2 start! notify one thread
+T2 End!
+T1 End!
+
+>**Object.wait()和Thread.sleep()方法都可以让线程等待若干时间，除了wait可以被唤醒外，另外一个重要的区别就是wait方法会释放所有的对象的锁，而sleep方法不会释放任何资源**
