@@ -1,5 +1,8 @@
-%%:uuid=160503232905006
-
+---
+layout: page
+title: JAVA线程
+permalink: /JAVA线程/
+---
 ## 1 JAVA线程: 创建与启动
 ###1.1 继承java.lang.Thread类
 ```
