@@ -1,0 +1,214 @@
+<p>%%:uuid=160507125240009
+Jekyll将纯文本转化为静态网站和博客 http://jekyll.bootcss.com/</p>
+
+<h2 id="section">1. 安装</h2>
+<p>### 1.1 事先准备
+* Ruby
+* RubyGems
+* Linux, Unix, or Mac OS X
+* jekyll running on window</p>
+
+<h4 id="ruby">1.1.1 Ruby</h4>
+<p>（1）下载Ruby： http://rubyinstaller.org/downloads/
+<img src="res:\attach\160507125240009\安装Ruby.jpg" alt="安装Ruby" />
+（2）验证Ruby安装成功
+<code class="highlighter-rouge">
+D:\04-make_it_done\01-blog&gt;ruby -v
+ruby 2.3.0p0 (2015-12-25 revision 53290) [x64-mingw32]
+</code>
+#### 1.1.2 jekyll模板
+<code class="highlighter-rouge">
+gem install jekyll
+</code>
+由于ruby和gem被和谐了，可能出现如下错误：
+<img src="res:\attach\160507125240009\Gem install error.jpg" alt="Gem install error" />
+可以使用淘宝提供的国内镜像，详细信息参见： https://ruby.taobao.org/
+``` 
+$ gem sources –add https://ruby.taobao.org/ –remove https://rubygems.org/
+$ gem sources -l
+<em>** CURRENT SOURCES **</em></p>
+
+<p>https://ruby.taobao.org
+# 请确保只有 ruby.taobao.org
+$ gem install rails
+```</p>
+
+<p>出现证书不匹配错误：
+<img src="res:\attach\160507125240009\Error In SSL.jpg" alt="Error In SSL" />
+问题是本地 ca-bundle 中没有包含 GlobalSign 根证书导致的。（https://github.com/alibaba/ruby.taobao.org/issues/54）
+解决问题的方法有两个
+（1）升级 rubygems 到 2.6.3 版本（该版本把 GlobalSign 加入到了 gem 中的证书链中）
+（2）更新 openssl 的 ca-bundle 到最新</p>
+
+<p>由于淘宝的解决方案有个SSL证书的BUG，换成了http://mirror.sysu.edu.cn/rubygems/ 镜像使用。
+获取jekyll模板成功：
+<img src="res:\attach\160507125240009\安装jekyll.jpg" alt="安装jekyll" /></p>
+
+<h2 id="blog">2 生成本地Blog</h2>
+<p>### 2.1 生成一个静态页面
+<code class="highlighter-rouge">
+jekyll new ccblog
+</code>
+<img src="res:\attach\160507125240009\Jekyll new.jpg" alt="Jekyll new" />
+### 2.2 启动服务
+<code class="highlighter-rouge">
+jekyll server
+</code>
+<img src="res:\attach\160507125240009\jekyll server.jpg" alt="jekyll server" />
+### 2.3 访问本地页面
+默认url： http://localhost:4000/
+<img src="res:\attach\160507125240009\第一个jekyll页面.jpg" alt="第一个jekyll页面" /></p>
+
+<h2 id="section-1">3. 撰写博客</h2>
+<p>Jekyll所有的文章都在<code class="highlighter-rouge">_posts</code>文件夹中。这些文件可以用Markdown 编写， 也可以用Textile 格式编写。只要文件中有 YAML头信息，它们就会从源格式转化成 HTML 页面，从而成为 你的静态网站的一部分。
+### 3.1 创建文章的文件
+发表一篇新文章，你所需要做的就是在_posts文件夹中创建一个新的文件。 文件名的命名非常重要。
+Jekyll 要求一篇文章的文件名遵循下面的格式：</p>
+
+<blockquote>
+  <p>年-月-日-标题.MARKUP</p>
+</blockquote>
+
+<p>在这里，年是4位数字，月和日都是2位数字。MARKUP扩展名代表了这篇文章 是用什么格式写的。下面是一些合法的文件名的例子：</p>
+
+<blockquote>
+  <p>2011-12-31-new-years-eve-is-awesome.md
+2012-09-12-how-to-write-a-blog.textile</p>
+</blockquote>
+
+<h3 id="section-2">3.2 内容格式</h3>
+<p>使用Markdown和Textile进行内容编辑。
+可以在工程根目录下创建一个文件夹，明年为assets或者downloads，用于保存图片或者文件资源。
+<em>使用 <code class="highlighter-rouge">site.url</code> 变量来引用资源文件：</em>
+在文章中引用一个图片：
+<code class="highlighter-rouge">
+![有帮助的截图](http://cc2chblog.github.io/assets/screenshot.jpg)
+</code></p>
+
+<h3 id="section-3">3.3文章的目录</h3>
+<p>所有文章都在一个目录中是没有问题的，但是如果你不将文章列表列出来博客文章是不会被人看到 。在另一个页面上创建文章的列表（或者使用模版）是很简单的。 感谢Liquid模版语言和它的标记，下面 是如何创建文章列表的简单例子：
+```</p>
+<ul>
+  
+    <li>
+      <a href="/2016/05/07/Jekyll%E6%90%AD%E5%BB%BA%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2.html">Jekyll搭建静态博客</a>
+    </li>
+  
+    <li>
+      <a href="/JAVA线程/">JAVA线程</a>
+    </li>
+  
+</ul>
+<div class="highlighter-rouge"><pre class="highlight"><code>
+### 3.4 文章摘要
+Jekyll 会自动取每篇文章从开头到第一次出现excerpt_separator的地方作为文章的摘要， 并将此内容保存到变量post.excerpt中。拿上面生成文章列表的例子，你可能想在每个标题下给出文章内容的提示，你可以在每篇文章 的第一段加上如下的代码：
+</code></pre>
+</div>
+<ul>
+  
+    <li>
+      <a href="/2016/05/07/Jekyll%E6%90%AD%E5%BB%BA%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2.html">Jekyll搭建静态博客</a>
+      <p>%%:uuid=160507125240009
+Jekyll将纯文本转化为静态网站和博客 http://jekyll.bootcss.com/</p>
+
+
+    </li>
+  
+    <li>
+      <a href="/JAVA线程/">JAVA线程</a>
+      <h2 id="java-">1 JAVA线程: 创建与启动</h2>
+<p>###1.1 继承java.lang.Thread类
+<code class="highlighter-rouge">
+java.lang.Object
+  |-- java.lang.Thread
+</code>
+创建线程：
+``` java
+ class PrimeThread extends Thread {
+         long minPrime;
+         PrimeThread(long minPrime) {
+             this.minPrime = minPrime;
+         }</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>     public void run() {
+         // compute primes larger than minPrime
+          . . .
+     }
+ }
+</code></pre>
+</div>
+
+
+    </li>
+  
+</ul>
+<div class="highlighter-rouge"><pre class="highlight"><code>### 3.5 高亮代码段
+Jekyll 自带语法高亮功能，它是由 Pygments 来实现的。在文章中插入一段高亮代码非常 容易，只需使用下面的 Liquid 标记：
+</code></pre>
+</div>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">show</span>
+  <span class="vi">@widget</span> <span class="o">=</span> <span class="no">Widget</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:id</span><span class="p">])</span>
+  <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+    <span class="nb">format</span><span class="p">.</span><span class="nf">html</span> <span class="c1"># show.html.erb</span>
+    <span class="nb">format</span><span class="p">.</span><span class="nf">json</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">json: </span><span class="vi">@widget</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>### 3.6 layout
+layout表示使用的是post布局，title是文章标题，date是自动生成的日期，categories是该文章生成html文件后存放的目录，可以去_site/jekyll/update下找到对应日期下面的html文档。当然你也可以只设置jekyll单一的目录，甚至是更多级别的目录，用空格分开即可。头信息设置完成后就可以书写正文了。
+</code></pre>
+</div>
+<hr />
+<p>layout: post
+title:  “Welcome to Jekyll!”
+date:   2016-03-04 10:52:19 +0100
+categories: jekyll update
+—
+```</p>
+
+<h2 id="github-pages">4. Github Pages</h2>
+<p>### 4.1 创建一个repository
+<img src="res:\attach\160507125240009\Create a new repository.jpg" alt="Create a new repository" />
+### 4.2 进入settings，生成Github Pages
+<img src="res:\attach\160507125240009\github page.jpg" alt="github page" />
+### 4.3 首页展示信息
+<img src="res:\attach\160507125240009\image.jpg" alt="首页展示" />
+### 4.4 首页样式
+<img src="res:\attach\160507125240009\首页样式.jpg" alt="首页样式" />
+<strong>Github的静态页面就已经配置成功了：</strong>
+http://dawncc.github.io/ccblog/
+##5. 将jekyll工程部署到github上
+### 5.1 从github上clone静态页面
+<img src="res:\attach\160507125240009\clone.jpg" alt="clone" /></p>
+
+<h3 id="jekyll">5.2 使用jekyll定制页面</h3>
+
+<p>将第1章节中生成的jekyll工程提交到当前目录下。使用git commit和pull功能上传到github的gh-pages分支下。
+<img src="res:\attach\160507125240009\commitpull.jpg" alt="commitpull" /></p>
+
+<h3 id="github--jekyll-">5.3 GitHub + Jekyll 工作机制</h3>
+
+<p>itHub还为每个项目提供了域名，例如，你有一个项目名为blog， GitHub为这个项目提供的域名为 username.github.io/blog ， 当你访问这个域名时，GitHub会去解析username用户下，blog项目的gh-pages 分支。
+<img src="res:\attach\160507125240009\github rul.jpg" alt="github url" />
+如果你需要使用插件，那么需要维护两个分支，一个是网站的源代码分支，另一个 是 Jeklly 解析源代码后生成的静态网站。</p>
+
+<p>例如，我的源代码分支名为 master ，静态网站分支名为 gh-pages 。平时写博客时， 首先在 master 分支下，添加新文章，然后本地使用 jekyll build 将添加文章后的网站 解析一次，这时 _site 目录下就有新网站的静态代码了。然后把这个目录下的所有内容 复制到 gh-pages 分支下。这个过程，可以写一个 Makefile ，每次添加文章后 make 一下， 就自动将文章发布到 GitHub 上。</p>
+
+<h2 id="jekyll-1">6. Jekyll模板</h2>
+<p>找到根目录下的_config.yml文件，配置里面的相关信息，其中baseurl</p>
+
+<p><img src="res:\attach\160507125240009\config.yml.jpg" alt="config.yml" /></p>
+
+<h3 id="indexhtml">6.1 配置index.html</h3>
+<p>index.html使用jekyll模板生成静态页面，可以从其中看到，首页的详细信息和指向的文章页面和资源文件的引用。
+通过修改<code class="highlighter-rouge">href="/tabsblog"</code> 修改具体的文章页面。
+其中<code class="highlighter-rouge">site.baseurl</code>为_config.yml文件中指定的baseurl。
+<img src="res:\attach\160507125240009\index.jpg" alt="index" /></p>
